@@ -4,10 +4,9 @@ int socketfd;
 int client_socket;
 struct sockaddr_in server_addr;
 struct sockaddr_in client_addr;
-//int8_t send_buffer[BUFFER_LENGHT];  
-int8_t receive_buffer[BUFFER_LENGHT]; 
-socklen_t addres_len_server = sizeof(server_addr);
-
+char receive_buffer[RECV_BUFFER_SIZE];
+char send_buffer[SEND_BUFFER_SIZE]; 
+ 
 
 int create_socket(){
 
@@ -80,34 +79,47 @@ int accept_connection(){
 
 
 int recveive_client(){
+ 
+int total_message_size = 0;
+int receive_check;
 
-int receive_check = recv(client_socket,receive_buffer,sizeof(receive_buffer),0);   
+while(total_message_size < 36){
 
+    receive_check = recv(client_socket,receive_buffer + total_message_size,PACKET_SIZE - total_message_size,0);   
 
-if(receive_check <= 0){
+     
+    if(receive_check <= 0){
 
     printf("receive error:%d", receive_check);
 
     return RECEIVE_ERROR;
+    
+}
+
+    total_message_size += receive_check;
+
+     
 }
          
-return receive_check;
+ printf("packet complete\n");
+ receive_buffer[36] = '\0'; 
+ return RECVEIVE_PACKET_SUCCES;
 
 };
 
-int server_send(){
+int server_send(int user_id){
 
-    int size_send_buffer = sizeof(send_buffer);
+    int user_id_send = htonl(user_id);
 
-    int server_send_check = send(client_socket,receive_buffer,sizeof(receive_buffer),0);
+    int server_send_check = send(client_socket,&user_id_send,sizeof(user_id_send),0);
 
-    if(server_send_check != -1){
+    if(server_send_check == -1){
 
         return server_send_failed;
 
     }
 
-    if(server_send_check < size_send_buffer){
+    if(server_send_check < sizeof(user_id_send)){
 
         printf("buffer is not fully send");
 
@@ -120,7 +132,18 @@ int server_send(){
 
 int socket_close(){
 
-socket_close();
+int communication_socket_close_check = close(client_socket);
+
+if(communication_socket_close_check == SOCKET_CLOSE_FAILED){
+
+    printf("communication socket close failed");
+
+    return SOCKET_CLOSE_FAILED;
+}    
+
+
+return SOCKET_CLOSE_SUCCES;
+
 
 }
 

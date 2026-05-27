@@ -1,27 +1,29 @@
 #include "server.h"
+#include "server_data_procces.h"
 
-int main(){
-
+int main()
+{
 create_socket();
 bind_socket();
 socket_listen();
 
-while(socketfd != -1){
+while (socketfd != -1) {
 
-    int accept_status = accept_connection();
+int accept_status = accept_connection();
 
-    if(accept_status != ACCEPT_FAILED){
+if (accept_status != ACCEPT_FAILED) {
 
-        recveive_client();
-        server_send(); 
+    if (recveive_client() == RECVEIVE_PACKET_SUCCES) {
 
-        close_socket();
+        int user_id = get_or_create_user();
+
+        server_send(user_id);
     }
 
-};
+        socket_close();
+    }
+}
 
-close_socket();
 
     return 0;
-
-};
+}
