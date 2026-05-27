@@ -27,18 +27,20 @@
 #define CLIENT_QUE_SIZE 3
 #define server_send_succes 0
 #define server_send_failed -1
+#define SOCKET_CLOSE_FAILED -1
+#define SOCKET_CLOSE_SUCCES 1
+#define RECVEIVE_PACKET_SUCCES 1
+#define PACKET_SIZE 36
 #define SEND_BUFFER_SIZE 240
 #define RECV_BUFFER_SIZE 240
 
-
-extern socklen_t addres_len_server;
-extern socklen_t addres_len_client;
+ 
 extern int socketfd;
 extern int client_socket;
-extern int8_t receive_buffer[RECV_BUFFER_SIZE];
-extern int8_t send_buffer[SEND_BUFFER_SIZE];
+extern char receive_buffer[RECV_BUFFER_SIZE];
+extern char send_buffer[SEND_BUFFER_SIZE];
 
-//struct sockaddr_in;
+ 
 
 
 int create_socket();
@@ -46,11 +48,8 @@ int bind_socket();
 int socket_listen();
 int accept_connection();
 int recveive_client();
-int server_send();
+int server_send(int user_id);
 int socket_close();
-
- 
-
 
 
 #endif 
