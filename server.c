@@ -14,7 +14,7 @@ socketfd = socket(AF_INET,SOCK_STREAM,0);
 
 if(socketfd == -1){
 
-    printf("socket error");
+    printf("socket error\n");
 
     return SOCKET_ERROR_CREATION_FAILED;
 }
@@ -22,6 +22,8 @@ if(socketfd == -1){
 int socket_option = 1;
 
 setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR,&socket_option,sizeof(socket_option));
+
+printf("socket succes\n");
 
 return SOCKET_SUCCES;
 };
@@ -40,6 +42,8 @@ if(bind_check != 0){
     return SOCKETBIND_fail;
 }
 
+printf("bind succes\n");
+
 return SOCKETBIND_SUCCES;
 };
 
@@ -49,10 +53,12 @@ int socket_listen_check = listen(socketfd,CLIENT_QUE_SIZE);
 
 if(socket_listen_check == -1){
 
-    printf("error code:%d",socket_listen_check);
+    printf("error code:%d\n",socket_listen_check);
     
     return LISTEN_FAILED; 
 }
+
+printf("listen error code is%d\n",socket_listen_check);
 
 return LISTEN_SUCCES;
 
@@ -67,12 +73,14 @@ int accept_connection(){
 
     if(client_socket == -1){
 
-        printf("error code:%d",client_socket);
+        printf("error code:%d\n",client_socket);
         
         return ACCEPT_FAILED;
 
     }
 
+    printf("client connected\n");
+     
     return ACCEPT_SUCCES;
 
 }
@@ -90,7 +98,7 @@ while(total_message_size < 36){
      
     if(receive_check <= 0){
 
-    printf("receive error:%d", receive_check);
+    printf("receive error:%d\n", receive_check);
 
     return RECEIVE_ERROR;
     
@@ -103,6 +111,9 @@ while(total_message_size < 36){
          
  printf("packet complete\n");
  receive_buffer[36] = '\0'; 
+
+printf("recveice packet succes\n");
+
  return RECVEIVE_PACKET_SUCCES;
 
 };
@@ -111,7 +122,11 @@ int server_send(int user_id){
 
     int user_id_send = htonl(user_id);
 
+    printf("user_id%d",user_id);
+
     int server_send_check = send(client_socket,&user_id_send,sizeof(user_id_send),0);
+
+    printf("server error code is%d",server_send_check);
 
     if(server_send_check == -1){
 
@@ -121,7 +136,7 @@ int server_send(int user_id){
 
     if(server_send_check < sizeof(user_id_send)){
 
-        printf("buffer is not fully send");
+        printf("buffer is not fully send\n");
 
         return server_send_failed;
     }
@@ -136,7 +151,7 @@ int communication_socket_close_check = close(client_socket);
 
 if(communication_socket_close_check == SOCKET_CLOSE_FAILED){
 
-    printf("communication socket close failed");
+    printf("communication socket close failed\n");
 
     return SOCKET_CLOSE_FAILED;
 }    
